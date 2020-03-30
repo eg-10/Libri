@@ -14,6 +14,11 @@
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
     </head>
     <body>
+        <header>
+            @include('components.navbar')
+            @include('components.messages')
+        </header>
+
         @yield('content')
     </body>
 </html>
