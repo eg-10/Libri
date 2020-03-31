@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Book;
+use Storage;
 
 class BooksController extends Controller
 {
@@ -40,31 +41,44 @@ class BooksController extends Controller
             'name' => 'required',
             'author' => 'required',
             'description' => 'required',
-            // 'cover_image' => 'image|nullable|max:1999'
+            'cover_image' => 'image|nullable',
+            'main_file' => 'required|mimetypes:application/pdf'
         ]);
-
-        // Handle File Upload
-        // if($request->hasFile('cover_image')){
-        //     // Get filename with the extension
-        //     $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
-        //     // Get just filename
-        //     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        //     // Get just ext
-        //     $extension = $request->file('cover_image')->getClientOriginalExtension();
-        //     // Filename to store
-        //     $fileNameToStore= $filename.'_'.time().'.'.$extension;
-        //     // Upload Image
-        //     $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
-        // } else {
-        //     $fileNameToStore = 'noimage.jpg';
-        // }
 
         // Upload Book
         $book = new Book;
         $book->name = $request->input('name');
         $book->author = $request->input('author');
         $book->description = $request->input('description');
-        // $post->cover_image = $fileNameToStore;
+        $mainFilename = str_replace(' ', '_', $book->name).time().'.pdf';
+        $path = $request->file('main_file')->storeAs('public/main_files', $mainFilename);
+        $book->main_file = $mainFilename;
+        // // Get filename with the extension
+        // $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
+        // // Get just filename
+        // $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+        // // Get just ext
+        // $extension = $request->file('cover_image')->getClientOriginalExtension();
+        // Filename to store
+        // $fileNameToStore= $mainFilename.time().'.pdf';
+        // Upload Book File
+        
+
+        // Handle File Upload
+        if($request->hasFile('cover_image')){
+            // Get filename with the extension
+            $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just ext
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore= $filename.'_'.time().'.'.$extension;
+            // Upload Image
+            $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
+            $book->cover_image = $fileNameToStore;
+        }
+
         $book->save();
 
         return redirect('/')->with('success', 'Book Added');
@@ -120,28 +134,34 @@ class BooksController extends Controller
             'description' => 'required',
             // 'cover_image' => 'image|nullable|max:1999'
         ]);
-		$book = Book::find($id);
-         // Handle File Upload
-        // if($request->hasFile('cover_image')){
-        //     // Get filename with the extension
-        //     $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
-        //     // Get just filename
-        //     $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        //     // Get just ext
-        //     $extension = $request->file('cover_image')->getClientOriginalExtension();
-        //     // Filename to store
-        //     $fileNameToStore= $filename.'_'.time().'.'.$extension;
-        //     // Upload Image
-        //     $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
-        //     // Delete file if exists
-        //     Storage::delete('public/cover_images/'.$post->cover_image);
-        // }
+        $book = Book::find($id);
 
         // Update Book
         $book->name = $request->input('name');
         $book->author = $request->input('author');
         $book->description = $request->input('description');
-        // $post->cover_image = $fileNameToStore;
+        
+        if ($request->hasFile('main_file')) {
+            $mainFilename = str_replace(' ', '_', $book->name).time().'.pdf';
+            $path = $request->file('main_file')->storeAs('public/main_files', $mainFilename);
+            $book->main_file = $mainFilename;
+        }
+
+        // Handle File Upload
+        if($request->hasFile('cover_image')){
+            // Get filename with the extension
+            $filenameWithExt = $request->file('cover_image')->getClientOriginalName();
+            // Get just filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just ext
+            $extension = $request->file('cover_image')->getClientOriginalExtension();
+            // Filename to store
+            $fileNameToStore= $filename.'_'.time().'.'.$extension;
+            // Upload Image
+            $path = $request->file('cover_image')->storeAs('public/cover_images', $fileNameToStore);
+            $book->cover_image = $fileNameToStore;
+        }
+
         $book->save();
 
         return redirect('/')->with('success', 'Book Updated');
@@ -167,10 +187,12 @@ class BooksController extends Controller
         //     return redirect('/posts')->with('error', 'Unauthorized Page');
         // }
 
-        // if($post->cover_image != 'noimage.jpg'){
-        //     // Delete Image
-        //     Storage::delete('public/cover_images/'.$post->cover_image);
-        // }
+        if($book->cover_image){
+            // Delete Image
+            Storage::delete('public/cover_images/'.$book->cover_image);
+        }
+
+        Storage::delete('public/main_files/'.$book->main_file);
         
         $book->delete();
      

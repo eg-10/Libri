@@ -17,9 +17,14 @@
                 {{Form::textarea('description', '', ['class' => 'form-control', 'placeholder' => 'Describe the book'])}}
                 {{-- {{Form::textarea('description', '', ['id' => 'article-ckeditor', 'class' => 'form-control', 'placeholder' => 'Describe the book'])}} --}}
             </div>
-            {{-- <div class="form-group">
+            <div class="form-group">
+                {{Form::label('cover_image', 'Cover Image')}}
                 {{Form::file('cover_image')}}
-            </div> --}}
+            </div>
+            <div class="form-group">
+                {{Form::label('main_file', 'Book File')}}
+                {{Form::file('main_file')}}
+            </div>
             {{Form::submit('Submit', ['class'=>'btn btn-primary'])}}
         {!! Form::close() !!}
     </div>

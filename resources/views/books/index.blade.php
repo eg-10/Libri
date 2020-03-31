@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <h1>Books</h1>
-        @if (count($allBooks) > 1)
+        @if (count($allBooks) > 0)
             @foreach ($allBooks as $book)
                 <a href="books/{{ $book->id }}">
                 <div class="card m-2 p-4">
@@ -17,5 +17,4 @@
             <h3>No Books found</h3>
         @endif
     </div>
-
 @endsection
