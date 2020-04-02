@@ -106,7 +106,7 @@ class BooksController extends Controller
     {
         $book = Book::find($id);
         
-        //Check if post exists before editing
+        //Check if book exists before editing
         if (!isset($book)){
             return redirect('/')->with('error', 'Book Not Found');
         }

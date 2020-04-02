@@ -6,7 +6,7 @@
             <h1>{{ $book->name }}</h1>
             <small>By {{ $book->author }}</small>
             @if ($book->cover_image)
-                <p>Image:<br><img src="/storage/cover_images/{{ $book->cover_image }}"></p>    
+                <br><img src="/storage/cover_images/{{ $book->cover_image }}"><br><br>    
             @endif
             @php
                 if (Auth::check()) {
@@ -16,6 +16,18 @@
                     $usertype = null;
                 }
             @endphp
+            @if (isset(Auth::user()->collection) and Auth::user()->collection->books->contains($book)) 
+                {!!Form::open(['action' => ['CollectionsController@remove', $book->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
+                    {{Form::hidden('_method', 'PUT')}}
+                    {{Form::submit('Remove from Collection', ['class' => 'btn btn-danger'])}}
+                {!!Form::close()!!}
+            @else
+                {!!Form::open(['action' => ['CollectionsController@add', $book->id], 'method' => 'POST', 'class' => 'pull-right'])!!}
+                    {{Form::hidden('_method', 'PUT')}}
+                    {{Form::submit('Add  to Collection', ['class' => 'btn btn-success'])}}
+                {!!Form::close()!!}
+            @endif
+            <br>
             @if ($usertype == "ADMIN")
                 <a href="/books/{{ $book->id }}/edit" class="btn btn-primary">Edit</a>
                 <br><br>

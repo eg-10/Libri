@@ -26,6 +26,9 @@
                 $usertype = null;
             }
           @endphp
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url('/collection') }}">Your Collection</a>
+          </li>
           @if ($usertype == "ADMIN")
             <li class="nav-item">
               <a class="nav-link" href="{{ url('/books/create') }}">Add Book</a>
